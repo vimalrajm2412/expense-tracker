@@ -1,0 +1,57 @@
+/* =========================================================
+   CALENDAR STYLES
+   ========================================================= */
+.calendar-panel { padding: 22px; margin-bottom: 18px; box-sizing: border-box; overflow: hidden; }
+.calendar-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.calendar-weekdays {
+  display: grid;
+  /* minmax(0, 1fr) instead of 1fr: prevents a track from expanding past its
+     fair share just because its content (e.g. long amounts below) wants more room */
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.cal-day {
+  aspect-ratio: 1;
+  border-radius: var(--radius-sm);
+  background: var(--surface-strong);
+  border: 1px solid var(--border-glass);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: transform var(--transition-fast), background var(--transition-fast);
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+}
+.cal-day:hover { transform: scale(1.05); background: var(--surface); }
+.cal-day.empty { background: transparent; border: none; cursor: default; }
+.cal-day.empty:hover { transform: none; }
+.cal-day.today { border-color: var(--accent-blue); box-shadow: 0 0 0 2px rgba(91,140,255,0.3); }
+.cal-day.selected { background: var(--gradient-primary); color: #fff; }
+.cal-day-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent-pink); position: absolute; bottom: 6px; }
+.cal-day-amount {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 2px;
+  box-sizing: border-box;
+}
+.cal-day.selected .cal-day-amount { color: rgba(255,255,255,0.85); }

@@ -1,0 +1,51 @@
+/* =========================================================
+   AUTH SCREEN STYLES
+   ========================================================= */
+
+.auth-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 40px 36px;
+  position: relative;
+}
+
+.brand {
+  text-align: center;
+  margin-bottom: 28px;
+}
+.brand-orb {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  background: var(--gradient-primary);
+  box-shadow: 0 0 40px rgba(91,140,255,0.55);
+  animation: pulseOrb 3s ease-in-out infinite;
+}
+.brand-orb.small { width: 32px; height: 32px; margin: 0; box-shadow: 0 0 20px rgba(91,140,255,0.5); }
+@keyframes pulseOrb {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+.brand h1 { font-size: 1.8rem; letter-spacing: -0.02em; }
+.brand-sub { color: var(--text-secondary); font-size: 0.85rem; margin-top: 2px; }
+
+.auth-form { display: none; flex-direction: column; }
+.auth-form.active-form { display: flex; animation: fadeIn 0.4s ease both; }
+.auth-form h2 { font-size: 1.3rem; margin-bottom: 4px; }
+.auth-helper { color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 20px; }
+
+.switch-text {
+  text-align: center;
+  margin-top: 18px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}

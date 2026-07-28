@@ -1,0 +1,12 @@
+/* =========================================================
+   CHARTS STYLES
+   ========================================================= */
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+.chart-panel { display: flex; flex-direction: column; gap: 14px; min-height: 320px; }
+.chart-panel.wide { grid-column: 1 / -1; }
+.chart-panel canvas { max-height: 280px; }

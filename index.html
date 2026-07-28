@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PocketLedger</title>
+  <meta name="description" content="PocketLedger - a private, local-first personal finance dashboard for mobile and desktop." />
+  <meta name="theme-color" content="#0a0a1a" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="PocketLedger" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="icon" type="image/svg+xml" href="public/icons/favicon.svg" />
+  <link rel="icon" sizes="192x192" href="public/icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="public/icons/apple-touch-icon.png" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="styles/style.css" />
+  <link rel="stylesheet" href="styles/auth.css" />
+  <link rel="stylesheet" href="styles/dashboard.css" />
+  <link rel="stylesheet" href="styles/calendar.css" />
+  <link rel="stylesheet" href="styles/charts.css" />
+  <link rel="stylesheet" href="styles/responsive.css" />
+</head>
+<body>
+  <div class="orb-bg" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="stars"></div>
+  </div>
+
+  <div id="global-loader" class="loader-overlay hidden">
+    <div class="spinner"></div>
+  </div>
+
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <section id="auth-screen" class="auth-screen">
+    <div class="auth-card glass">
+      <div class="brand">
+        <div class="brand-orb"></div>
+        <h1>PocketLedger</h1>
+        <p class="brand-sub">Personal Finance</p>
+      </div>
+
+      <form id="login-form" class="auth-form active-form" novalidate>
+        <h2>Welcome back</h2>
+        <p class="auth-helper">Sign in to continue to your dashboard.</p>
+
+        <label class="field">
+          <span>Email</span>
+          <input type="email" id="login-email" required autocomplete="email" placeholder="you@example.com" />
+        </label>
+        <label class="field">
+          <span>Password</span>
+          <input type="password" id="login-password" required autocomplete="current-password" placeholder="Password" />
+        </label>
+
+        <div class="field-row">
+          <label class="checkbox">
+            <input type="checkbox" id="remember-me" checked />
+            <span>Remember me</span>
+          </label>
+          <button type="button" id="forgot-password-btn" class="link-btn">Forgot password?</button>
+        </div>
+
+        <button type="submit" class="btn btn-primary full">Sign In</button>
+        <div class="divider"><span>or</span></div>
+        <button type="button" id="google-login-btn" class="btn btn-google full">
+          <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.56 2.7-3.87 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.55-1.84.87-3.06.87-2.36 0-4.36-1.59-5.08-3.74H.86v2.34A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.92 10.69A5.4 5.4 0 0 1 3.64 9c0-.59.1-1.16.28-1.69V4.97H.86A9 9 0 0 0 0 9c0 1.45.35 2.83.86 4.03l3.06-2.34z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58A9 9 0 0 0 9 0 9 9 0 0 0 .86 4.97l3.06 2.34C4.64 5.17 6.64 3.58 9 3.58z"/></svg>
+          Continue with Google
+        </button>
+        <p class="switch-text">Don't have an account? <button type="button" class="link-btn" data-show="signup-form">Sign up</button></p>
+      </form>
+
+      <form id="signup-form" class="auth-form" novalidate>
+        <h2>Create your account</h2>
+        <p class="auth-helper">Start tracking your money in minutes.</p>
+        <label class="field">
+          <span>Full name</span>
+          <input type="text" id="signup-name" required autocomplete="name" placeholder="Jane Doe" />
+        </label>
+        <label class="field">
+          <span>Email</span>
+          <input type="email" id="signup-email" required autocomplete="email" placeholder="you@example.com" />
+        </label>
+        <label class="field">
+          <span>Password</span>
+          <input type="password" id="signup-password" required autocomplete="new-password" placeholder="At least 8 characters" />
+        </label>
+        <label class="field">
+          <span>Confirm password</span>
+          <input type="password" id="signup-confirm-password" required autocomplete="new-password" placeholder="Re-enter password" />
+        </label>
+        <button type="submit" class="btn btn-primary full">Create Account</button>
+        <p class="switch-text">Already have an account? <button type="button" class="link-btn" data-show="login-form">Sign in</button></p>
+      </form>
+
+      <form id="forgot-password-form" class="auth-form" novalidate>
+        <h2>Reset your password</h2>
+        <p class="auth-helper">We'll email you a link to reset it.</p>
+        <label class="field">
+          <span>Email</span>
+          <input type="email" id="reset-email" required autocomplete="email" placeholder="you@example.com" />
+        </label>
+        <button type="submit" class="btn btn-primary full">Send Reset Link</button>
+        <p class="switch-text"><button type="button" class="link-btn" data-show="login-form">Back to sign in</button></p>
+      </form>
+    </div>
+  </section>
+
+  <div id="app-shell" class="app-shell hidden">
+    <aside class="sidebar glass">
+      <div class="sidebar-brand">
+        <div class="brand-orb small"></div>
+        <span>PocketLedger</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-view="dashboard-view">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" fill="currentColor"/></svg>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-item" data-view="calendar-view">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M7 2v2H5a2 2 0 0 0-2 2v3h18V6a2 2 0 0 0-2-2h-2V2h-2v2H9V2H7zM3 11v8a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-8H3z" fill="currentColor"/></svg>
+          <span>Calendar</span>
+        </button>
+        <button class="nav-item" data-view="analytics-view">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M5 9h3v11H5V9zm6-6h3v17h-3V3zm6 9h3v8h-3v-8z" fill="currentColor"/></svg>
+          <span>Analytics</span>
+        </button>
+        <button class="nav-item" data-view="search-view">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z" fill="currentColor"/></svg>
+          <span>Search</span>
+        </button>
+        <button class="nav-item" data-view="settings-view">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M19.14 12.94a7.43 7.43 0 0 0 .06-.94 7.43 7.43 0 0 0-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.61-.22l-2.39.96a7.34 7.34 0 0 0-1.62-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54a7.34 7.34 0 0 0-1.62.94l-2.39-.96a.5.5 0 0 0-.61.22L2.7 8.84a.5.5 0 0 0 .12.64l2.03 1.58a7.43 7.43 0 0 0 0 1.88l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32a.5.5 0 0 0 .61.22l2.39-.96a7.34 7.34 0 0 0 1.62.94l.36 2.54a.5.5 0 0 0 .5.42h3.84a.5.5 0 0 0 .5-.42l.36-2.54a7.34 7.34 0 0 0 1.62-.94l2.39.96a.5.5 0 0 0 .61-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.5A3.5 3.5 0 1 1 15.5 12 3.5 3.5 0 0 1 12 15.5z" fill="currentColor"/></svg>
+          <span>Settings</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-chip">
+          <div id="user-avatar" class="user-avatar">U</div>
+          <div class="user-info">
+            <span id="user-name" class="user-name">User</span>
+            <span id="user-email" class="user-email">user@example.com</span>
+          </div>
+        </div>
+        <button id="logout-btn" class="btn btn-ghost full">Logout</button>
+      </div>
+    </aside>
+
+    <header class="mobile-topbar glass">
+      <button id="mobile-menu-btn" class="icon-btn" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z" fill="currentColor"/></svg>
+      </button>
+      <span class="mobile-brand">PocketLedger</span>
+      <button id="mobile-quick-add" class="icon-btn" aria-label="Add expense">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M19 13H13v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="currentColor"/></svg>
+      </button>
+    </header>
+
+    <main class="main-content">
+      <section id="dashboard-view" class="view active-view">
+        <div class="view-header">
+          <div>
+            <h1>Dashboard</h1>
+            <p class="view-sub">Here's what's happening with your money.</p>
+          </div>
+          <button id="open-add-expense" class="btn btn-primary">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M19 13H13v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="currentColor"/></svg>
+            Add Expense
+          </button>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card glass fade-in" style="--delay:0">
+            <span class="stat-label">Monthly Spending</span>
+            <span id="stat-monthly" class="stat-value">Rs 0</span>
+            <span class="stat-trend" id="stat-monthly-trend"></span>
+          </div>
+          <div class="stat-card glass fade-in" style="--delay:1">
+            <span class="stat-label">Income</span>
+            <span id="stat-income" class="stat-value">Rs 0</span>
+          </div>
+          <div class="stat-card glass fade-in" style="--delay:2">
+            <span class="stat-label">Savings</span>
+            <span id="stat-savings" class="stat-value">Rs 0</span>
+          </div>
+          <div class="stat-card glass fade-in" style="--delay:3">
+            <span class="stat-label">Budget Remaining</span>
+            <span id="stat-budget" class="stat-value">Rs 0</span>
+            <div class="progress-bar"><div id="budget-progress" class="progress-fill"></div></div>
+          </div>
+          <div class="stat-card glass fade-in" style="--delay:4">
+            <span class="stat-label">Today's Spending</span>
+            <span id="stat-today" class="stat-value">Rs 0</span>
+          </div>
+          <div class="stat-card glass fade-in" style="--delay:5">
+            <span class="stat-label">Weekly Spending</span>
+            <span id="stat-weekly" class="stat-value">Rs 0</span>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <section class="panel glass">
+            <div class="panel-header">
+              <h3>Recent Transactions</h3>
+            </div>
+            <div id="recent-transactions" class="transaction-list"></div>
+          </section>
+          <section class="panel glass">
+            <div class="panel-header">
+              <h3>Top Categories</h3>
+            </div>
+            <ul id="top-categories" class="category-list"></ul>
+          </section>
+        </div>
+      </section>
+
+      <section id="calendar-view" class="view">
+        <div class="view-header">
+          <div>
+            <h1>Calendar</h1>
+            <p class="view-sub">Review spending by day.</p>
+          </div>
+        </div>
+        <section class="calendar-panel glass">
+          <div class="calendar-header">
+            <button id="cal-prev" class="icon-btn" aria-label="Previous month">&lt;</button>
+            <h2 id="cal-month-label">Month</h2>
+            <button id="cal-next" class="icon-btn" aria-label="Next month">&gt;</button>
+          </div>
+          <div class="calendar-weekdays">
+            <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+          </div>
+          <div id="calendar-grid" class="calendar-grid"></div>
+        </section>
+        <section id="calendar-day-detail" class="panel glass hidden">
+          <div class="panel-header">
+            <h3 id="calendar-day-title">Selected day</h3>
+          </div>
+          <div id="calendar-day-list" class="transaction-list"></div>
+        </section>
+      </section>
+
+      <section id="analytics-view" class="view">
+        <div class="view-header">
+          <div>
+            <h1>Analytics</h1>
+            <p class="view-sub">Understand your income and spending patterns.</p>
+          </div>
+        </div>
+        <div class="charts-grid">
+          <section class="panel glass chart-panel">
+            <h3>Category Breakdown</h3>
+            <canvas id="chart-category"></canvas>
+          </section>
+          <section class="panel glass chart-panel">
+            <h3>Income vs Expense</h3>
+            <canvas id="chart-income-expense"></canvas>
+          </section>
+          <section class="panel glass chart-panel">
+            <h3>Monthly Spending</h3>
+            <canvas id="chart-monthly"></canvas>
+          </section>
+          <section class="panel glass chart-panel">
+            <h3>This Week</h3>
+            <canvas id="chart-weekly"></canvas>
+          </section>
+        </div>
+      </section>
+
+      <section id="search-view" class="view">
+        <div class="view-header">
+          <div>
+            <h1>Search</h1>
+            <p class="view-sub">Find, filter, and export transactions.</p>
+          </div>
+          <div class="header-actions">
+            <button id="export-csv" class="btn btn-ghost">Export CSV</button>
+            <button id="export-pdf" class="btn btn-ghost">Export PDF</button>
+            <button id="print-report" class="btn btn-ghost">Print</button>
+          </div>
+        </div>
+        <section class="filter-panel glass">
+          <div class="filters-grid">
+            <label class="field">
+              <span>Search notes or tags</span>
+              <input id="search-input" type="search" placeholder="Search..." />
+            </label>
+            <label class="field">
+              <span>Category</span>
+              <select id="filter-category">
+                <option value="">All categories</option>
+                <option value="Food">Food & Dining</option>
+                <option value="Transport">Transport</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Bills">Bills & Utilities</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Health">Health</option>
+                <option value="Travel">Travel</option>
+                <option value="Other">Other</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Type</span>
+              <select id="filter-type">
+                <option value="">All</option>
+                <option value="expense">Expense</option>
+                <option value="income">Income</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>From</span>
+              <input id="filter-date-from" type="date" />
+            </label>
+            <label class="field">
+              <span>To</span>
+              <input id="filter-date-to" type="date" />
+            </label>
+            <label class="field">
+              <span>Min Amount</span>
+              <input id="filter-amount-min" type="number" min="0" step="0.01" />
+            </label>
+            <label class="field">
+              <span>Max Amount</span>
+              <input id="filter-amount-max" type="number" min="0" step="0.01" />
+            </label>
+            <label class="field">
+              <span>Sort</span>
+              <select id="filter-sort">
+                <option value="newest">Newest</option>
+                <option value="oldest">Oldest</option>
+                <option value="highest">Highest amount</option>
+                <option value="lowest">Lowest amount</option>
+              </select>
+            </label>
+          </div>
+        </section>
+        <section class="panel glass">
+          <div id="search-results" class="transaction-list"></div>
+        </section>
+      </section>
+
+      <section id="settings-view" class="view">
+        <div class="view-header">
+          <div>
+            <h1>Settings</h1>
+            <p class="view-sub">Manage preferences, profile, and data.</p>
+          </div>
+        </div>
+        <div class="settings-grid">
+          <section class="panel glass">
+            <h3>Preferences</h3>
+            <input type="hidden" id="currency-select" value="INR" />
+            <label class="field">
+              <span>Monthly Budget</span>
+              <input id="monthly-budget-input" type="number" min="0" step="1" placeholder="0" />
+            </label>
+            <div class="field">
+              <span>Theme</span>
+              <div class="segmented">
+                <button id="theme-dark-btn" class="segment active" type="button">Dark</button>
+                <button id="theme-light-btn" class="segment" type="button">Light</button>
+              </div>
+            </div>
+            <button id="save-preferences" class="btn btn-primary full">Save Preferences</button>
+          </section>
+          <section class="panel glass">
+            <h3>Profile</h3>
+            <label class="field">
+              <span>Name</span>
+              <input id="profile-name-input" type="text" placeholder="Your name" />
+            </label>
+            <button id="save-profile" class="btn btn-primary full">Save Profile</button>
+          </section>
+          <section class="panel glass">
+            <h3>Data</h3>
+            <button id="settings-export-data" class="btn btn-ghost full">Export All Data (JSON)</button>
+          </section>
+          <section class="panel glass danger-panel">
+            <h3>Danger Zone</h3>
+            <p class="auth-helper">Deleting your account permanently removes all your data.</p>
+            <button id="delete-account-btn" class="btn btn-danger full">Delete Account</button>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="expense-modal" class="modal-overlay hidden">
+    <div class="modal glass">
+      <div class="modal-header">
+        <h3 id="expense-modal-title">Add Transaction</h3>
+        <button id="close-expense-modal" class="icon-btn" aria-label="Close modal">x</button>
+      </div>
+      <form id="expense-form" class="modal-form" novalidate>
+        <input type="hidden" id="expense-id" />
+        <div class="field-row">
+          <label class="checkbox-type">
+            <input type="radio" name="expense-type" value="expense" checked />
+            <span>Expense</span>
+          </label>
+          <label class="checkbox-type">
+            <input type="radio" name="expense-type" value="income" />
+            <span>Income</span>
+          </label>
+        </div>
+        <label class="field">
+          <span>Amount</span>
+          <input type="number" id="expense-amount" step="1" min="0" required placeholder="0" />
+        </label>
+        <label class="field">
+          <span>Category</span>
+          <select id="expense-category" required>
+            <option value="Food">Food & Dining</option>
+            <option value="Transport">Transport</option>
+            <option value="Shopping">Shopping</option>
+            <option value="Bills">Bills & Utilities</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Health">Health</option>
+            <option value="Travel">Travel</option>
+            <option value="Other">Other</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Date</span>
+          <input type="date" id="expense-date" required />
+        </label>
+        <label class="field">
+          <span>Payment Method</span>
+          <select id="expense-payment-method">
+            <option value="Cash">Cash</option>
+            <option value="Card">Card</option>
+            <option value="UPI">UPI</option>
+            <option value="Bank Transfer">Bank Transfer</option>
+            <option value="Other">Other</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Tags (comma separated)</span>
+          <input type="text" id="expense-tags" placeholder="work, urgent" />
+        </label>
+        <label class="field">
+          <span>Notes</span>
+          <textarea id="expense-notes" rows="2" placeholder="Optional notes..."></textarea>
+        </label>
+        <label class="checkbox">
+          <input type="checkbox" id="expense-recurring" />
+          <span>This is a recurring transaction</span>
+        </label>
+        <label class="checkbox" style="margin-top:8px;">
+          <input type="checkbox" id="expense-exclude-budget" />
+          <span>Exclude from budget &amp; spending totals</span>
+        </label>
+        <div class="modal-actions">
+          <button type="button" id="delete-expense-btn" class="btn btn-danger hidden">Delete</button>
+          <button type="submit" class="btn btn-primary full">Save Transaction</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="confirm-dialog" class="modal-overlay hidden">
+    <div class="modal glass small">
+      <h3 id="confirm-dialog-title">Are you sure?</h3>
+      <p id="confirm-dialog-message" class="auth-helper">This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button id="confirm-dialog-cancel" class="btn btn-ghost full">Cancel</button>
+        <button id="confirm-dialog-confirm" class="btn btn-danger full">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="scripts/main.js"></script>
+</body>
+</html>
